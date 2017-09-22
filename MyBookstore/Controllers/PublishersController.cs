@@ -57,46 +57,120 @@ namespace MyBookstore.Controllers
 
         // POST: Publishers/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(PublishersModels publisher)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            //try
+            //{
+            //    // TODO: Add insert logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
+            //    return RedirectToAction("Index");
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
+            using (SqlConnection con = new SqlConnection(Helper.GetCon()))
             {
-                return View();
+                con.Open();
+                string query = @"INSERT INTO publishers VALUES
+                       (@pubName)";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("pubName", publisher.Name);
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction("Index");
+                }
             }
         }
 
         // GET: Publishers/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            PublishersModels publisher = new PublishersModels();
+
+            using (SqlConnection con = new SqlConnection(Helper.GetCon()))
+            {
+                con.Open();
+                string query = @"SELECT pubName
+                                FROM publishers WHERE pubID=@pubID";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("pubID", id);
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.HasRows)
+                        {
+                            while (dr.Read())
+                            {
+                                publisher.Name = dr["pubName"].ToString();
+                            }
+                            return View(publisher);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index");
+                        }
+                    }
+                }
+            }
         }
+
 
         // POST: Publishers/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(PublishersModels publisher)
         {
-            try
-            {
-                // TODO: Add update logic here
+            //try
+            //{
+            //    // TODO: Add update logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
+            //    return RedirectToAction("Index");
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
+            using (SqlConnection con = new SqlConnection(Helper.GetCon()))
             {
-                return View();
+                con.Open();
+                string query = @"UPDATE publishers SET pubName=@pubName
+                        WHERE pubID=@pubID";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@pubName", publisher.Name);
+                    cmd.Parameters.AddWithValue("@pubID", publisher.ID);
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction("Index");
+                }
             }
         }
 
+
         // GET: Publishers/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            using (SqlConnection con = new SqlConnection(Helper.GetCon()))
+            {
+                con.Open();
+                string query = @"DELETE FROM publishers WHERE pubID=@pubID";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("pubID", id);
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction("Index");
+                }
+            }
         }
 
         // POST: Publishers/Delete/5

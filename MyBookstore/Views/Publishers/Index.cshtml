@@ -29,10 +29,12 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
+            <a href="@Url.Action("Edit", "Publishers", new { id = item.ID })" class="btn btn-xs btn-info">
+                <i class='fa fa-edit'></i>
+            </a>
+            <a href="@Url.Action("Delete", "Publishers", new { id = item.ID })" class="btn btn-xs btn-danger" onclick='return confirm("Are you sure?");'>
+                <i class='fa fa-trash'></i>
+</td>
     </tr>
 }
 
