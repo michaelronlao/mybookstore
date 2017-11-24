@@ -1,4 +1,6 @@
-﻿using MyBookstore.App_Code;
+﻿using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
+using MyBookstore.App_Code;
 using MyBookstore.Models;
 using System;
 using System.Collections.Generic;
@@ -213,6 +215,27 @@ namespace MyBookstore.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult GenerateReport()
+        {
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Server.MapPath("~/Reports/rptAuthors.rpt"));
+            rd.SetDatabaseLogon("laomr", "09228192275", "TAFT-CL307", "mybookstore");
+            rd.ExportToHttpResponse(ExportFormatType.PortableDocFormat, System.Web.HttpContext.Current.Response, true, "Authors Report");
+            return View();
+        }
+
+        public ActionResult GenerateIndividualReport(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Server.MapPath("~/Reports/rptAuthorIndividual.rpt"));
+            rd.SetDatabaseLogon("laomr", "09228192275", "TAFT-CL307", "mybookstore");
+            rd.SetParameterValue("authorID", id);
+            rd.SetParameterValue("Username", "Michael Ron Lao");
+            rd.ExportToHttpResponse(ExportFormatType.PortableDocFormat, System.Web.HttpContext.Current.Response, true, "Author #" + id.ToString()+ "'s Individual Report");
+            return View();
         }
     }
 }
